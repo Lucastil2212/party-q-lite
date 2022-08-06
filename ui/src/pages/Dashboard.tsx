@@ -11,7 +11,6 @@ export default function Dashboard({ code }: any) {
   const { setAccessToken } = useContext(UserContext);
 
   useEffect(() => {
-    console.log(accessToken);
     if (!accessToken) {
       return;
     }

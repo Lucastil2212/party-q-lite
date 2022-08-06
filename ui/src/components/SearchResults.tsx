@@ -12,10 +12,9 @@ import { useEffect } from "react";
 
 export default function SearchResults({ searchResults, chooseTrack }: any) {
   const TrackSearchResult = (track: any) => {
-    console.log(track);
     return (
       <Button onClick={chooseTrack}>
-        <Card sx={{ display: "flex", width: "auto" }}>
+        <Card sx={{ display: "flex", width: "100%" }}>
           <Box sx={{ display: "flex", flexDirection: "column" }}></Box>
           <CardContent sx={{ flex: "1 0 auto" }}>
             <Typography component="div" variant="h5">
