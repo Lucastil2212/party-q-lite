@@ -214,7 +214,7 @@ export default function PartyDashboard({ code }: any) {
             handleToggleTops();
           }}
         >
-          Toggle Recents
+          Toggle Tops
         </Button>
         <Button
           variant="contained"
