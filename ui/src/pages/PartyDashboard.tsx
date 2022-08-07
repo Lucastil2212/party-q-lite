@@ -4,8 +4,9 @@ import axios from "axios";
 import { UserContext } from ".././context/UserContext";
 import SongSearch from "../components/SongSearch";
 import SearchResults from "../components/SearchResults";
+import TrackDisplay from "../components/TrackDisplay";
 import SpotifyWebApi from "spotify-web-api-node";
-
+import SpotifyPlayer from "react-spotify-web-playback";
 const spotifyApi: any = new SpotifyWebApi({
   clientId: "6a7def7d5c1d4807b9af2b75cc3fce50",
 });
@@ -13,6 +14,7 @@ const spotifyApi: any = new SpotifyWebApi({
 export type Track = {
   title?: string;
   artist?: string;
+  uri?: string;
 };
 
 export default function PartyDashboard({ code }: any) {
@@ -34,9 +36,13 @@ export default function PartyDashboard({ code }: any) {
 
   const chooseTrack = (track: any): void => {
     if (track === playingTrack) return;
+
     setPlayingTrack(track);
     setSearch("");
     setLyrics("");
+    setToggleRecents(false);
+    setToggleTops(false);
+    setSearchResults([]);
   };
 
   useEffect(() => {
@@ -51,19 +57,11 @@ export default function PartyDashboard({ code }: any) {
       .then((data: any) => {
         setRecents(
           data.body.items.map((item: any) => {
-            const smallestAlbumImage = item.track.album.images.reduce(
-              (smallest: any, image: any) => {
-                if (image.height < smallest.height) return image;
-                return smallest;
-              },
-              item.track.album.images[0]
-            );
-
             return {
               artist: item.track.artists[0].name,
               title: item.track.name,
               uri: item.track.uri,
-              albumUrl: smallestAlbumImage.url,
+              albumUrl: item.album.images,
             };
           })
         );
@@ -86,19 +84,11 @@ export default function PartyDashboard({ code }: any) {
       .then((res: any) => {
         setTops(
           res.body.items.map((item: any) => {
-            const smallestAlbumImage = item.album.images.reduce(
-              (smallest: any, image: any) => {
-                if (image.height < smallest.height) return image;
-                return smallest;
-              },
-              item.album.images[0]
-            );
-
             return {
               artist: item.artists[0].name,
               title: item.name,
               uri: item.uri,
-              albumUrl: smallestAlbumImage.url,
+              albumUrl: item.album.images,
             };
           })
         );
@@ -132,19 +122,11 @@ export default function PartyDashboard({ code }: any) {
     spotifyApi.searchTracks(search).then((res: any) => {
       setSearchResults(
         res.body.tracks.items.map((track: any) => {
-          const smallestAlbumImage = track.album.images.reduce(
-            (smallest: any, image: any) => {
-              if (image.height < smallest.height) return image;
-              return smallest;
-            },
-            track.album.images[0]
-          );
-
           return {
             artist: track.artists[0].name,
             title: track.name,
             uri: track.uri,
-            albumUrl: smallestAlbumImage.url,
+            albumUrl: track.album.images,
           };
         })
       );
@@ -190,19 +172,11 @@ export default function PartyDashboard({ code }: any) {
       .then((res: any) => {
         setSearchResults(
           res.body.tracks.map((track: any) => {
-            const smallestAlbumImage = track.album.images.reduce(
-              (smallest: any, image: any) => {
-                if (image.height < smallest.height) return image;
-                return smallest;
-              },
-              track.album.images[0]
-            );
-
             return {
               artist: track.artists[0].name,
               title: track.name,
               uri: track.uri,
-              albumUrl: smallestAlbumImage.url,
+              albumUrl: track.album.images,
             };
           })
         );
@@ -215,12 +189,10 @@ export default function PartyDashboard({ code }: any) {
   const handleToggleRecents = () => {
     setToggleTops(false);
     setToggleRecents(!toggleRecents);
-    console.log(tops);
   };
   const handleToggleTops = () => {
     setToggleRecents(false);
     setToggleTops(!toggleTops);
-    console.log(tops);
   };
 
   return (
@@ -246,11 +218,12 @@ export default function PartyDashboard({ code }: any) {
         </Button>
         <Button
           variant="contained"
+          sx={{ marginLeft: "1%" }}
           onClick={() => {
             toggleRecommendations();
           }}
         >
-          Toggle Recomendations
+          Get Recomendations
         </Button>
       </div>
       <SearchResults
@@ -258,6 +231,12 @@ export default function PartyDashboard({ code }: any) {
           toggleRecents ? recents : toggleTops ? tops : searchResults
         }
         chooseTrack={chooseTrack}
+      />
+      <TrackDisplay playingTrack={playingTrack} />
+      <SpotifyPlayer
+        autoPlay={playingTrack ? true : false}
+        token={accessToken}
+        uris={playingTrack && playingTrack.uri ? [playingTrack?.uri] : []}
       />
     </Container>
   );

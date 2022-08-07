@@ -11,9 +11,14 @@ import {
 import { useEffect } from "react";
 
 export default function SearchResults({ searchResults, chooseTrack }: any) {
+  function handlePlay(track: any) {
+    console.log(track.track);
+    chooseTrack(track.track);
+  }
+
   const TrackSearchResult = (track: any) => {
     return (
-      <Button onClick={chooseTrack}>
+      <Button onClick={() => handlePlay(track)}>
         <Card sx={{ display: "flex", width: "100%" }}>
           <Box sx={{ display: "flex", flexDirection: "column" }}></Box>
           <CardContent sx={{ flex: "1 0 auto" }}>
@@ -31,7 +36,7 @@ export default function SearchResults({ searchResults, chooseTrack }: any) {
           <CardMedia
             component="img"
             sx={{ height: "64px", width: "64px" }}
-            image={track.track.albumUrl}
+            image={track.track.albumUrl[2].url}
           />
         </Card>
       </Button>

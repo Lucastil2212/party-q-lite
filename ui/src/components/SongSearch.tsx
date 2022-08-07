@@ -8,6 +8,8 @@ export default function SongSearch({ search, setSearch }: any) {
   return (
     <div>
       <TextField
+        sx={{ width: "100%", paddingBottom: "1%" }}
+        color="primary"
         label="Search Songs"
         variant="outlined"
         value={search}

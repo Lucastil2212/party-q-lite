@@ -34,6 +34,7 @@ export default function Create() {
 
   return (
     <div>
+      <h1>Create a Party</h1>
       <Box component="form" noValidate autoComplete="off">
         <Stack>
           <TextField
