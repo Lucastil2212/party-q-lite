@@ -1,12 +1,9 @@
-import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import lyricsFinder from "lyrics-finder";
-import SpotifyWebApi from "spotify-web-api-node";
-
-const REDIRECT_URI = "http://localhost:3000/dashboard";
-const CLIENT_ID = "6a7def7d5c1d4807b9af2b75cc3fce50";
-const CLIENT_SECRET = "9a8f31089fdc45f08f235401ed574010";
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const lyricsFinder = require("lyrics-finder");
+const SpotifyWebApi = require("spotify-web-api-node");
 
 // initialize express app and start middlewares
 const app = express();
@@ -18,9 +15,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken;
   const spotifyApi = new SpotifyWebApi({
-    redirectUri: REDIRECT_URI,
-    clientId: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
+    redirectUri: process.env.REDIRECT_URI,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
     refreshToken,
   });
 
@@ -41,9 +38,9 @@ app.post("/refresh", (req, res) => {
 app.post("/login", (req, res) => {
   const code = req.body.code;
   const spotifyApi = new SpotifyWebApi({
-    redirectUri: REDIRECT_URI,
-    clientId: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
+    redirectUri: process.env.REDIRECT_URI,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
   });
 
   spotifyApi
@@ -64,8 +61,8 @@ app.post("/login", (req, res) => {
 app.get("/features", (req, res) => {
   const track = req.query.track;
   const spotifyApi = new SpotifyWebApi({
-    clientId: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
   });
 
   spotifyApi

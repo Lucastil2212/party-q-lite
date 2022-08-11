@@ -32,7 +32,7 @@ export default function PartyDashboard({ code }: any) {
   const [tops, setTops] = useState([]);
 
   const [seedArtists, setSeedArtists] = useState(["011bJBtG8SdkBqBiSpBllF"]);
-  const { accessToken } = useContext(UserContext);
+  const { accessToken, user } = useContext(UserContext);
 
   const chooseTrack = (track: any): void => {
     if (track === playingTrack) return;

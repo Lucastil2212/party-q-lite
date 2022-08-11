@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 
 export default function TrackDisplay({ playingTrack }: any) {
-  console.log(playingTrack);
   if (playingTrack) {
     return (
       <Card

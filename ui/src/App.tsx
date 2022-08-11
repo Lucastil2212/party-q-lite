@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./components/Login";
 import Home from "./pages/Home";
 import PartyDashboard from "./pages/PartyDashboard";
-import { UserContext } from "./context/UserContext";
+import { UserContext, UserType } from "./context/UserContext";
 
 const code = new URLSearchParams(window.location.search).get("code");
 
@@ -16,10 +16,15 @@ function App() {
     setToken(value);
   };
 
-  const userContext = useContext(UserContext);
+  const [user, setCurrentUser] = useState<UserType>(undefined);
+  const setUser = (value: UserType) => {
+    setCurrentUser(value);
+  };
 
   return (
-    <UserContext.Provider value={{ accessToken, setAccessToken }}>
+    <UserContext.Provider
+      value={{ accessToken, setAccessToken, user, setUser }}
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
