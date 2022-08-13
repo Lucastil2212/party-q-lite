@@ -123,6 +123,10 @@ export default function PartyDashboard({ code }: any) {
     if (!search) return setSearchResults([]);
     if (!accessToken) return;
 
+    setToggleRecents(false);
+    setToggleTops(false);
+    setRecommendations(false);
+
     spotifyApi.searchTracks(search).then((res: any) => {
       setSearchResults(
         res.body.tracks.items.map((track: any) => {
