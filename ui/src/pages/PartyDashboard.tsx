@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, Button } from "@mui/material";
+import { Container, Button, Modal, Typography, Box } from "@mui/material";
 import axios from "axios";
 import { UserContext } from ".././context/UserContext";
 import SongSearch from "../components/SongSearch";
@@ -7,6 +7,8 @@ import SearchResults from "../components/SearchResults";
 import TrackDisplay from "../components/TrackDisplay";
 import SpotifyWebApi from "spotify-web-api-node";
 import SpotifyPlayer from "react-spotify-web-playback";
+import CreatePlaylistModal from "../components/createPlaylistModal";
+
 const spotifyApi: any = new SpotifyWebApi({
   clientId: "6a7def7d5c1d4807b9af2b75cc3fce50",
 });
@@ -156,13 +158,13 @@ export default function PartyDashboard({ code }: any) {
     setSeedArtists(artists);
   }, [accessToken]);
 
-  const toggleRecommendations = () => {
+  const toggleRecommendations = async () => {
     setToggleTops(false);
     setToggleRecents(false);
     setSearchResults([]);
     if (!accessToken) return;
 
-    spotifyApi
+    await spotifyApi
       .getRecommendations({
         min_energy: 0.4,
         seed_artists: seedArtists,
@@ -195,6 +197,12 @@ export default function PartyDashboard({ code }: any) {
     setToggleTops(!toggleTops);
   };
 
+  const onCreatePlaylist = () => {
+    if (!accessToken) return;
+    spotifyApi.setAccessToken(accessToken);
+
+    // spotifyApi.createPlaylist;
+  };
   return (
     <Container>
       <h1>Party Dashboard</h1>
@@ -219,8 +227,8 @@ export default function PartyDashboard({ code }: any) {
         <Button
           variant="contained"
           sx={{ marginLeft: "1%" }}
-          onClick={() => {
-            toggleRecommendations();
+          onClick={async () => {
+            await toggleRecommendations();
           }}
         >
           Get Recomendations
@@ -233,6 +241,10 @@ export default function PartyDashboard({ code }: any) {
         chooseTrack={chooseTrack}
       />
       <TrackDisplay playingTrack={playingTrack} />
+      <CreatePlaylistModal
+        toggleRecents={toggleRecents}
+        onCreatePlaylist={onCreatePlaylist}
+      />
       <SpotifyPlayer
         autoPlay={playingTrack ? true : false}
         token={accessToken}
