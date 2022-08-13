@@ -7,8 +7,7 @@ import SearchResults from "../components/SearchResults";
 import TrackDisplay from "../components/TrackDisplay";
 import SpotifyWebApi from "spotify-web-api-node";
 import SpotifyPlayer from "react-spotify-web-playback";
-import CreatePlaylistModal from "../components/createPlaylistModal";
-
+import CreatePlaylistModal, { Type } from "../components/createPlaylistModal";
 const spotifyApi: any = new SpotifyWebApi({
   clientId: "6a7def7d5c1d4807b9af2b75cc3fce50",
 });
@@ -35,6 +34,8 @@ export default function PartyDashboard({ code }: any) {
 
   const [seedArtists, setSeedArtists] = useState(["011bJBtG8SdkBqBiSpBllF"]);
   const { accessToken, user } = useContext(UserContext);
+
+  const [recommendations, setRecommendations] = useState(false);
 
   const chooseTrack = (track: any): void => {
     if (track === playingTrack) return;
@@ -103,6 +104,7 @@ export default function PartyDashboard({ code }: any) {
   useEffect(() => {
     if (!playingTrack) return;
 
+    setRecommendations(false);
     axios
       .get("http://localhost:3001/lyrics", {
         params: {
@@ -158,13 +160,13 @@ export default function PartyDashboard({ code }: any) {
     setSeedArtists(artists);
   }, [accessToken]);
 
-  const toggleRecommendations = async () => {
+  const toggleRecommendations = () => {
     setToggleTops(false);
     setToggleRecents(false);
+    setRecommendations(true);
     setSearchResults([]);
     if (!accessToken) return;
-
-    await spotifyApi
+    spotifyApi
       .getRecommendations({
         min_energy: 0.4,
         seed_artists: seedArtists,
@@ -190,36 +192,59 @@ export default function PartyDashboard({ code }: any) {
 
   const handleToggleRecents = () => {
     setToggleTops(false);
+    setRecommendations(false);
     setToggleRecents(!toggleRecents);
   };
   const handleToggleTops = () => {
     setToggleRecents(false);
+    setRecommendations(false);
     setToggleTops(!toggleTops);
   };
 
-  const onCreatePlaylist = () => {
+  const onCreatePlaylist = (type: Type) => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
 
-    // Create a private playlist
-    spotifyApi
-      .createPlaylist("My playlist", {
-        description: "My description",
-        public: true,
-      })
-      .then(
-        function (data: any) {
-          console.log("Created playlist!");
-        },
-        function (err: any) {
-          console.log("Something went wrong!", err);
-        }
-      );
+    switch (type) {
+      case "recents":
+        console.log("RECENTS");
+        break;
+      case "tops":
+        console.log("TOPS");
+        break;
+      case "recomendations":
+        console.log("RECOMMENDATIONS");
+        break;
+      default:
+        console.log("CUSTOM");
+        break;
+    }
+    // ("Creating playlist from ");
+    // // Create a private playlist
+    // spotifyApi
+    //   .createPlaylist("My playlist", {
+    //     description: "My description",
+    //     public: true,
+    //   })
+    //   .then(
+    //     function (data: any) {
+    //       console.log("Created playlist!");
+    //     },
+    //     function (err: any) {
+    //       console.log("Something went wrong!", err);
+    //     }
+    //   );
     // spotifyApi.createPlaylist;
   };
   return (
     <Container>
       <h1>Party Dashboard</h1>
+      {/* <CreatePlaylistModal
+          toggleRecents={toggleRecents}
+          toggleTops={toggleTops}
+          toggleRecommendations={recommendations}
+          onCreatePlaylist={onCreatePlaylist}
+        /> */}
       <div>
         <SongSearch setSearch={setSearch} />
         <Button
@@ -241,13 +266,19 @@ export default function PartyDashboard({ code }: any) {
         <Button
           variant="contained"
           sx={{ marginLeft: "1%" }}
-          onClick={async () => {
-            await toggleRecommendations();
+          onClick={() => {
+            toggleRecommendations();
           }}
         >
           Get Recomendations
         </Button>
       </div>
+      <CreatePlaylistModal
+        toggleRecents={toggleRecents}
+        toggleTops={toggleTops}
+        toggleRecommendations={recommendations}
+        onCreatePlaylist={onCreatePlaylist}
+      />
       <SearchResults
         searchResults={
           toggleRecents ? recents : toggleTops ? tops : searchResults
@@ -255,10 +286,6 @@ export default function PartyDashboard({ code }: any) {
         chooseTrack={chooseTrack}
       />
       <TrackDisplay playingTrack={playingTrack} />
-      <CreatePlaylistModal
-        toggleRecents={toggleRecents}
-        onCreatePlaylist={onCreatePlaylist}
-      />
       <SpotifyPlayer
         autoPlay={playingTrack ? true : false}
         token={accessToken}

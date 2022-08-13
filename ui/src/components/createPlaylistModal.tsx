@@ -1,46 +1,58 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Box, Typography, IconButton } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
+export enum Type {
+  RECENTS = "recents",
+  TOPS = "tops",
+  RECOMMENDATIONS = "recomendations",
+  CUSTOM = "custom",
+}
 export default function CreatePlaylistModal({
   toggleRecents,
+  toggleTops,
+  toggleRecommendations,
   onCreatePlaylist,
 }: any) {
   const [open, setOpen] = useState(toggleRecents);
+  const [type, setType] = useState<Type>(Type.CUSTOM);
 
   useEffect(() => {
-    setOpen(toggleRecents);
-  }, [toggleRecents]);
+    if (toggleRecents | toggleTops | toggleRecommendations) setOpen(true);
+
+    if (toggleRecents) {
+      setType(Type.RECENTS);
+    } else if (toggleTops) {
+      setType(Type.TOPS);
+    } else if (toggleRecommendations) {
+      setType(Type.RECOMMENDATIONS);
+    } else {
+      setType(Type.CUSTOM);
+    }
+  }, [toggleRecents, toggleTops, toggleRecommendations]);
 
   const handleClose = () => {
     setOpen(false);
   };
   const handleCreatePlaylist = () => {
-    onCreatePlaylist();
+    onCreatePlaylist(type);
     setOpen(false);
   };
   return (
-    <div>
-      {" "}
-      <Modal
-        open={open}
-        onClose={() => handleClose()}
-        hideBackdrop={true}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{ zIndex: -1 }}
-      >
-        <Box style={{}}>
-          <IconButton
-            onClick={() => {
-              handleCreatePlaylist();
-            }}
-          ></IconButton>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Create Playlist??
-          </Typography>
-        </Box>
-      </Modal>
+    <div style={{}}>
+      <Box style={{ display: "flex", flexDirection: "row" }}>
+        <p>Create playlist from {type} </p>
+        <IconButton
+          onClick={() => {
+            handleCreatePlaylist();
+          }}
+          size="large"
+          color="primary"
+        >
+          <AddCircleIcon />
+        </IconButton>
+      </Box>
     </div>
   );
 }
