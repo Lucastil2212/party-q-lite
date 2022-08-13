@@ -63,7 +63,7 @@ export default function PartyDashboard({ code }: any) {
               artist: item.track.artists[0].name,
               title: item.track.name,
               uri: item.track.uri,
-              albumUrl: item.album.images,
+              albumUrl: item.track.album.images,
             };
           })
         );
@@ -201,6 +201,20 @@ export default function PartyDashboard({ code }: any) {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
 
+    // Create a private playlist
+    spotifyApi
+      .createPlaylist("My playlist", {
+        description: "My description",
+        public: true,
+      })
+      .then(
+        function (data: any) {
+          console.log("Created playlist!");
+        },
+        function (err: any) {
+          console.log("Something went wrong!", err);
+        }
+      );
     // spotifyApi.createPlaylist;
   };
   return (
