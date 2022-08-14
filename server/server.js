@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const lyricsFinder = require("lyrics-finder");
 const SpotifyWebApi = require("spotify-web-api-node");
 
+const { createUser, getSongList } = require("./db/users");
+
 // initialize express app and start middlewares
 const app = express();
 app.use(cors());
@@ -84,4 +86,15 @@ app.get("/lyrics", async (req, res) => {
   res.json({ lyrics });
 });
 
+app.post("/user", async (req, res) => {
+  const newUser = req.body.user;
+  createUser(newUser);
+  res.send(newUser);
+});
+
+app.get("/user", async (req, res) => {
+  const user = req.body.user;
+  const songList = getSongList(user);
+  res.json(songList);
+});
 app.listen(3001);
