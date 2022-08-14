@@ -53,7 +53,7 @@ export default function Dashboard({ code }: any) {
     const user = { spotifyId: id, name: name };
 
     axios
-      .post("http://localhost:3001/login", {
+      .post("http://localhost:3001/user", {
         user,
       })
       .then((res) => {
