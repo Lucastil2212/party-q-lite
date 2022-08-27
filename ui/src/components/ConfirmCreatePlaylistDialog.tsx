@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   TextField,
   Container,
@@ -12,6 +12,8 @@ import {
   ListItem,
 } from "@mui/material";
 
+import { usePlaylists } from "../hook/usePlaylists";
+
 export type DialogProps = {
   songs: any[];
   open: boolean;
@@ -24,47 +26,43 @@ export default function ConfirmCreatePlaylistDialog({
   setOpen,
   spotifyApi,
 }: DialogProps) {
-  const [playlistTitle, setPlaylistTitle] = React.useState("");
+  const [playlistName, setPlaylistName] = React.useState("");
   const [playlistDescription, setPlaylistDescription] = React.useState("");
+
+  const [completed, setCompleted] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const { playlists, createPlaylist, addTracksToPlaylist, isLoading } =
+    usePlaylists();
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleConfirmedCreatePlaylist = () => {
-    createPlaylist();
-    setOpen(false);
-  };
+    createPlaylist(playlistName, playlistDescription);
 
-  const createPlaylist = () => {
-    spotifyApi.createPlaylist(playlistTitle, {
-      description: playlistDescription,
-      public: true,
-    });
-  };
+    console.log(playlists);
 
-  const handleTitleChange = (title: any) => {
-    setPlaylistTitle(title);
+    const playlistToAdd = playlists?.find(
+      (playlist: any) => playlistName === playlist.name
+    );
+    // addTracksToPlaylist(playlistToAdd.id, songs);
   };
-
-  const handleDescriptionChange = (description: any) => {
-    setPlaylistDescription(description);
-  };
-
   return (
     <Dialog onClose={() => handleClose()} open={open} style={{ color: "red" }}>
       <DialogTitle>Create a Playlist</DialogTitle>
       <Stack>
         <TextField
-          label="Title"
-          value={playlistTitle}
-          onChange={(e) => handleTitleChange(e.target.value)}
+          label="Name"
+          value={playlistName}
+          onChange={(e) => setPlaylistName(e.target.value)}
           style={{ paddingBottom: "5%" }}
         ></TextField>
         <TextField
           label="Description"
           value={playlistDescription}
-          onChange={(e) => handleDescriptionChange(e.target.value)}
+          onChange={(e) => setPlaylistDescription(e.target.value)}
         ></TextField>
       </Stack>
       <DialogContentText sx={{ padding: "10%" }}>

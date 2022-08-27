@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import {
   Container,
   Button,
+  IconButton,
   Modal,
   Typography,
   Box,
@@ -16,6 +17,9 @@ import SpotifyWebApi from "spotify-web-api-node";
 import SpotifyPlayer from "react-spotify-web-playback";
 import CreatePlaylistModal, { Type } from "../components/createPlaylistModal";
 import ConfirmCreatePlaylistDialog from "../components/ConfirmCreatePlaylistDialog";
+import LyricDisplay from "../components/LyricDisplay";
+import LyricsIcon from "@mui/icons-material/Lyrics";
+import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 
 const spotifyApi: any = new SpotifyWebApi({
   clientId: "6a7def7d5c1d4807b9af2b75cc3fce50",
@@ -48,6 +52,8 @@ export default function PartyDashboard({ code }: any) {
 
   const [confirmCreatePlaylist, setConfirmCreatePlaylist] = useState(false);
   const [newPlaylist, setNewPlaylist] = useState([]);
+
+  const [toggleDisplay, setToggleDisplay] = useState(true);
 
   const chooseTrack = (track: any): void => {
     if (track === playingTrack) return;
@@ -253,68 +259,78 @@ export default function PartyDashboard({ code }: any) {
     // spotifyApi.createPlaylist;
   };
 
-  const handleCreatePlaylist = (arg: any) => {
+  const handleCreatePlaylist = (tracks: any) => {
     setConfirmCreatePlaylist(true);
-    setNewPlaylist(arg);
-    console.log(arg);
+    console.log(tracks);
   };
 
   return (
     <Container>
       <h1>Party Dashboard</h1>
-      {/* <CreatePlaylistModal
+      <SongSearch setSearch={setSearch} />
+      <div>
+        <div>
+          <Button
+            variant={toggleRecents ? "contained" : "outlined"}
+            onClick={() => {
+              handleToggleRecents();
+            }}
+          >
+            Toggle Recents
+          </Button>
+          <Button
+            variant={toggleTops ? "contained" : "outlined"}
+            onClick={() => {
+              handleToggleTops();
+            }}
+          >
+            Toggle Tops
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ marginLeft: "1%" }}
+            onClick={() => {
+              toggleRecommendations();
+            }}
+          >
+            Get Recomendations
+          </Button>
+        </div>
+        <CreatePlaylistModal
           toggleRecents={toggleRecents}
           toggleTops={toggleTops}
           toggleRecommendations={recommendations}
           onCreatePlaylist={onCreatePlaylist}
-        /> */}
-      <div>
-        <SongSearch setSearch={setSearch} />
-        <Button
-          variant={toggleRecents ? "contained" : "outlined"}
-          onClick={() => {
-            handleToggleRecents();
-          }}
-        >
-          Toggle Recents
-        </Button>
-        <Button
-          variant={toggleTops ? "contained" : "outlined"}
-          onClick={() => {
-            handleToggleTops();
-          }}
-        >
-          Toggle Tops
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ marginLeft: "1%" }}
-          onClick={() => {
-            toggleRecommendations();
-          }}
-        >
-          Get Recomendations
-        </Button>
-      </div>
-      <CreatePlaylistModal
-        toggleRecents={toggleRecents}
-        toggleTops={toggleTops}
-        toggleRecommendations={recommendations}
-        onCreatePlaylist={onCreatePlaylist}
-      />
-      <SearchResults
-        searchResults={
-          toggleRecents ? recents : toggleTops ? tops : searchResults
-        }
-        chooseTrack={chooseTrack}
-      />
-      <TrackDisplay playingTrack={playingTrack} />
-      <SpotifyPlayer
-        autoPlay={playingTrack ? true : false}
-        token={accessToken}
-        uris={playingTrack && playingTrack.uri ? [playingTrack?.uri] : []}
-      />
+        />
+        <SearchResults
+          searchResults={
+            toggleRecents ? recents : toggleTops ? tops : searchResults
+          }
+          chooseTrack={chooseTrack}
+        />
+        {/* <div>{toggleDisplay ? <TrackDisplay playingTrack={playingTrack}/> : <LyricDisplay playingTrack={playingTrack} />}</div> */}
 
+        <Box>
+          {toggleDisplay ? (
+            <TrackDisplay playingTrack={playingTrack} />
+          ) : (
+            <div style={{ whiteSpace: "pre", textAlign: "center" }}>
+              {lyrics}
+            </div>
+          )}
+        </Box>
+        <IconButton
+          color="primary"
+          onClick={() => setToggleDisplay(!toggleDisplay)}
+        >
+          {toggleDisplay ? <LibraryMusicIcon /> : <LyricsIcon />}
+        </IconButton>
+        <SpotifyPlayer
+          autoPlay={playingTrack ? true : false}
+          token={accessToken}
+          uris={playingTrack && playingTrack.uri ? [playingTrack?.uri] : []}
+        />
+      </div>
       <ConfirmCreatePlaylistDialog
         songs={newPlaylist}
         open={confirmCreatePlaylist}
