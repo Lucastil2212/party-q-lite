@@ -23,5 +23,5 @@
   "scripts": {
     "lint": "eslint . --fix"
   },
-  "type": "commonjs"
+  "type": "module"
 }

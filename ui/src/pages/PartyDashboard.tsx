@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, Button, Modal, Typography, Box } from "@mui/material";
+import {
+  Container,
+  Button,
+  Modal,
+  Typography,
+  Box,
+  Dialog,
+} from "@mui/material";
 import axios from "axios";
 import { UserContext } from ".././context/UserContext";
 import SongSearch from "../components/SongSearch";
@@ -8,6 +15,8 @@ import TrackDisplay from "../components/TrackDisplay";
 import SpotifyWebApi from "spotify-web-api-node";
 import SpotifyPlayer from "react-spotify-web-playback";
 import CreatePlaylistModal, { Type } from "../components/createPlaylistModal";
+import ConfirmCreatePlaylistDialog from "../components/ConfirmCreatePlaylistDialog";
+
 const spotifyApi: any = new SpotifyWebApi({
   clientId: "6a7def7d5c1d4807b9af2b75cc3fce50",
 });
@@ -36,6 +45,9 @@ export default function PartyDashboard({ code }: any) {
   const { accessToken, user } = useContext(UserContext);
 
   const [recommendations, setRecommendations] = useState(false);
+
+  const [confirmCreatePlaylist, setConfirmCreatePlaylist] = useState(false);
+  const [newPlaylist, setNewPlaylist] = useState([]);
 
   const chooseTrack = (track: any): void => {
     if (track === playingTrack) return;
@@ -211,10 +223,10 @@ export default function PartyDashboard({ code }: any) {
 
     switch (type) {
       case "recents":
-        console.log("RECENTS");
+        handleCreatePlaylist(recents);
         break;
       case "tops":
-        console.log("TOPS");
+        handleCreatePlaylist(tops);
         break;
       case "recomendations":
         console.log("RECOMMENDATIONS");
@@ -240,6 +252,13 @@ export default function PartyDashboard({ code }: any) {
     //   );
     // spotifyApi.createPlaylist;
   };
+
+  const handleCreatePlaylist = (arg: any) => {
+    setConfirmCreatePlaylist(true);
+    setNewPlaylist(arg);
+    console.log(arg);
+  };
+
   return (
     <Container>
       <h1>Party Dashboard</h1>
@@ -295,6 +314,13 @@ export default function PartyDashboard({ code }: any) {
         token={accessToken}
         uris={playingTrack && playingTrack.uri ? [playingTrack?.uri] : []}
       />
+
+      <ConfirmCreatePlaylistDialog
+        songs={newPlaylist}
+        open={confirmCreatePlaylist}
+        setOpen={setConfirmCreatePlaylist}
+        spotifyApi={spotifyApi}
+      ></ConfirmCreatePlaylistDialog>
     </Container>
   );
 }

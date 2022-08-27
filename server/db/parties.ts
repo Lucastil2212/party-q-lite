@@ -1,3 +1,3 @@
-const db = require("./db/db.js");
+const { db } = require("./db/db.js");
 
-export function createParty() {}
+export function createParty() { }

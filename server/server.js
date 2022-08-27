@@ -1,12 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const lyricsFinder = require("lyrics-finder");
-const SpotifyWebApi = require("spotify-web-api-node");
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import lyricsFinder from "lyrics-finder";
+import SpotifyWebApi from "spotify-web-api-node";
 
-const { createUser, getSongList } = require("./db/users");
+import { createUser, getSongList } from "./db/users.js";
 
+dotenv.config();
 // initialize express app and start middlewares
 const app = express();
 app.use(cors());
