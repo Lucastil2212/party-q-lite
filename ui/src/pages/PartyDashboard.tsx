@@ -20,6 +20,7 @@ import ConfirmCreatePlaylistDialog from "../components/ConfirmCreatePlaylistDial
 import LyricDisplay from "../components/LyricDisplay";
 import LyricsIcon from "@mui/icons-material/Lyrics";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
+import OceanDisplayModal from "../components/OceanDisplayModal";
 
 const spotifyApi: any = new SpotifyWebApi({
   clientId: "6a7def7d5c1d4807b9af2b75cc3fce50",
@@ -43,7 +44,7 @@ export default function PartyDashboard({ code }: any) {
   const [recents, setRecents] = useState([]);
 
   const [toggleTops, setToggleTops] = useState(false);
-  const [tops, setTops] = useState([]);
+  const [tops, setTops] = useState<any>();
 
   const [seedArtists, setSeedArtists] = useState(["011bJBtG8SdkBqBiSpBllF"]);
   const { accessToken, user } = useContext(UserContext);
@@ -167,7 +168,7 @@ export default function PartyDashboard({ code }: any) {
 
     spotifyApi
       .getMyTopArtists({
-        limit: 5,
+        limit: 20,
         time_range: "short_term",
       })
       .then((res: any) => {
@@ -191,7 +192,7 @@ export default function PartyDashboard({ code }: any) {
     spotifyApi
       .getRecommendations({
         min_energy: 0.4,
-        seed_artists: seedArtists,
+        seed_artists: seedArtists.slice(0, 6),
         min_popularity: 50,
         limit: 20,
       })
@@ -337,6 +338,7 @@ export default function PartyDashboard({ code }: any) {
         setOpen={setConfirmCreatePlaylist}
         spotifyApi={spotifyApi}
       ></ConfirmCreatePlaylistDialog>
+      <OceanDisplayModal tops={tops} />
     </Container>
   );
 }
