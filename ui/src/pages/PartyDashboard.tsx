@@ -297,11 +297,16 @@ export default function PartyDashboard({ code }: any) {
             Get Recomendations
           </Button>
         </div>
-        <CreatePlaylistModal
-          toggleRecents={toggleRecents}
-          toggleTops={toggleTops}
-          toggleRecommendations={recommendations}
-          onCreatePlaylist={onCreatePlaylist}
+        <div>
+          <CreatePlaylistModal
+            toggleRecents={toggleRecents}
+            toggleTops={toggleTops}
+            toggleRecommendations={recommendations}
+            onCreatePlaylist={onCreatePlaylist}
+          />
+        </div>
+        <OceanDisplayModal
+          tops={toggleRecents ? recents : toggleTops ? tops : searchResults}
         />
         <SearchResults
           searchResults={
@@ -310,7 +315,12 @@ export default function PartyDashboard({ code }: any) {
           chooseTrack={chooseTrack}
         />
         {/* <div>{toggleDisplay ? <TrackDisplay playingTrack={playingTrack}/> : <LyricDisplay playingTrack={playingTrack} />}</div> */}
-
+        <IconButton
+          color="primary"
+          onClick={() => setToggleDisplay(!toggleDisplay)}
+        >
+          {toggleDisplay ? <LibraryMusicIcon /> : <LyricsIcon />}
+        </IconButton>
         <Box>
           {toggleDisplay ? (
             <TrackDisplay playingTrack={playingTrack} />
@@ -320,12 +330,6 @@ export default function PartyDashboard({ code }: any) {
             </div>
           )}
         </Box>
-        <IconButton
-          color="primary"
-          onClick={() => setToggleDisplay(!toggleDisplay)}
-        >
-          {toggleDisplay ? <LibraryMusicIcon /> : <LyricsIcon />}
-        </IconButton>
         <SpotifyPlayer
           autoPlay={playingTrack ? true : false}
           token={accessToken}
@@ -338,7 +342,6 @@ export default function PartyDashboard({ code }: any) {
         setOpen={setConfirmCreatePlaylist}
         spotifyApi={spotifyApi}
       ></ConfirmCreatePlaylistDialog>
-      <OceanDisplayModal tops={tops} />
     </Container>
   );
 }
